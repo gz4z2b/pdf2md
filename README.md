@@ -6,7 +6,7 @@
 
 ## 使用方式
 
-开发完成后，用户只需要执行一个脚本：
+用户只需要执行一个脚本：
 
 ```bash
 bash scripts/convert.sh
@@ -28,8 +28,8 @@ pdf2md/
 ├── origin/                   # 用户放 PDF 原文件的目录
 ├── output/                   # 转换后 Markdown 文件的输出目录
 ├── scripts/                  # 一键执行脚本目录
-├── src/pdf2md/               # Python 源代码目录，开发时创建
-├── tests/                    # 测试用例目录，开发时创建
+├── src/pdf2md/               # Python 源代码目录
+├── tests/                    # 测试用例目录
 └── docs/                     # 项目文档目录
     ├── rule.md               # 项目规范
     ├── test.md               # 测试规范
