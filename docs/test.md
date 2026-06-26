@@ -6,13 +6,14 @@
 
 v1.0.0 的测试目标是确认下面几件事：
 
-1. 程序能找到 `origin` 目录和子目录中的 PDF。
+1. 程序能找到 `origin` 目录和子目录中的 PDF 与 Markdown。
 2. 每个 PDF 都会输出一个对应的 Markdown 文件。
-3. 输出文件保留原 PDF 的相对目录结构。
-4. PDF 文字能被正确读取并写入 Markdown。
-5. 遇到图片时，会写入图片占位符。
-6. 遇到损坏 PDF 或无法读取的 PDF 时，程序不会整体崩溃，而是记录失败原因后继续处理其他文件。
-7. 一键脚本能完成环境检查、依赖安装和转换流程。
+3. 已有 Markdown 会直接复制到 `output` 对应位置。
+4. 输出文件保留原文件的相对目录结构。
+5. PDF 文字能被正确读取并写入 Markdown。
+6. 遇到 PDF 图片时，会导出图片文件，并在 Markdown 中写入图片引用。
+7. 遇到损坏 PDF 或无法读取的 PDF 时，程序不会整体崩溃，而是记录失败原因后继续处理其他文件。
+8. 一键脚本能完成环境检查、依赖安装和转换流程。
 
 ## 测试工具
 
@@ -68,10 +69,13 @@ python -m pytest tests/test_batch.py
 | 用例 | 输入 | 预期结果 |
 | --- | --- | --- |
 | 单个 PDF 转换 | `origin/demo.pdf` | 生成 `output/demo.md` |
+| `.note` PDF 转换 | `origin/demo.note.pdf` | 生成 `output/demo.md`，不生成 `output/demo.note.md` |
 | 子目录 PDF 转换 | `origin/a/demo.pdf` | 生成 `output/a/demo.md` |
 | 多个 PDF 转换 | `origin/a.pdf`、`origin/b.pdf` | 两个文件都转换成功 |
-| 空目录 | `origin` 没有 PDF | 输出提示，不报错 |
-| 图片 PDF | PDF 中有图片 | Markdown 中出现图片占位符 |
+| Markdown 复制 | `origin/a.md` | 生成内容相同的 `output/a.md` |
+| 子目录 Markdown 复制 | `origin/a/demo.md` | 生成内容相同的 `output/a/demo.md` |
+| 空目录 | `origin` 没有 PDF 或 Markdown | 输出提示，不报错 |
+| 图片 PDF | PDF 中有图片 | 图片导出到 `output/sources`，Markdown 中出现图片引用 |
 | 空白 PDF | 页面无文字 | Markdown 中出现空白页提示 |
 | 损坏 PDF | 无法打开的 PDF | 记录失败，继续处理其他 PDF |
 
@@ -90,6 +94,7 @@ v1.0.0 开发完成后，至少满足：
 2. 核心模块测试覆盖率不低于 80%。
 3. `scripts/convert.sh` 可以在干净环境中一键执行。
 4. 使用一个真实 PDF 手动验证输出结果，确认 Markdown 内容可读。
+5. 使用带图片的真实 PDF 手动验证 `output/sources` 中存在图片文件，且 Markdown 链接路径可用。
 
 ## 失败处理规范
 

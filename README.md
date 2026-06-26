@@ -2,7 +2,7 @@
 
 这是一个用 Python 开发的 PDF 批量转 Markdown 工具。
 
-项目目标很简单：把 `origin` 目录以及子目录里的 PDF 文件读取出来，尽量保持原文档的标题、段落、换行和表格等排版，再输出成 `.md` 格式文档。v1.0.0 阶段先处理文字内容；如果 PDF 中出现图片，先在 Markdown 中写入图片占位符，后续版本再处理真实图片导出。
+项目目标很简单：把 `origin` 目录以及子目录里的 PDF 文件读取出来，尽量保持原文档的标题、段落、换行、表格和图片等内容，再输出成 `.md` 格式文档。如果 `origin` 中本来就是 Markdown 文件，会直接复制到 `output` 中。PDF 中能提取到的图片会导出到 `output/sources`，并在 Markdown 中生成图片引用。
 
 ## 使用方式
 
@@ -17,8 +17,10 @@ bash scripts/convert.sh
 1. 检查本机是否安装了可用的 Python。
 2. 创建或复用项目虚拟环境。
 3. 安装项目依赖。
-4. 扫描 `origin` 目录里的所有 PDF。
-5. 把转换后的 Markdown 文件输出到 `output` 目录。目录结构和文件名保持一致。
+4. 扫描 `origin` 目录里的所有 PDF 和 Markdown。
+5. 把转换或复制后的 Markdown 文件输出到 `output` 目录。目录结构保持一致，文件名末尾如果有 `.note` 会自动去掉。
+6. 如果 `output` 中已有同名 Markdown 文件，会直接替换成最新转换结果。
+7. 把 PDF 中提取到的图片输出到 `output/sources` 目录。
 
 ## 目录说明
 
@@ -26,7 +28,7 @@ bash scripts/convert.sh
 pdf2md/
 ├── README.md                 # 项目总说明和文档索引
 ├── origin/                   # 用户放 PDF 原文件的目录
-├── output/                   # 转换后 Markdown 文件的输出目录
+├── output/                   # 转换后 Markdown 文件的输出目录，sources 子目录保存图片资源
 ├── scripts/                  # 一键执行脚本目录
 ├── src/pdf2md/               # Python 源代码目录
 ├── tests/                    # 测试用例目录
@@ -44,9 +46,9 @@ pdf2md/
 | 层级 | 规划模块 | 作用 |
 | --- | --- | --- |
 | 命令入口层 | `src/pdf2md/cli.py` | 接收命令参数，启动转换任务 |
-| 批量任务层 | `src/pdf2md/batch.py` | 扫描 `origin` 目录，批量处理 PDF |
-| PDF 解析层 | `src/pdf2md/pdf_reader.py` | 读取 PDF 页面、文字块和图片信息 |
-| Markdown 生成层 | `src/pdf2md/markdown_writer.py` | 把解析结果写成 Markdown 文件 |
+| 批量任务层 | `src/pdf2md/batch.py` | 扫描 `origin` 目录，批量处理 PDF 和 Markdown |
+| PDF 解析层 | `src/pdf2md/pdf_reader.py` | 读取 PDF 页面、文字块、表格和图片数据 |
+| Markdown 生成层 | `src/pdf2md/markdown_writer.py` | 把解析结果写成 Markdown 文件，并处理标题、列表、表格和图片引用 |
 | 配置层 | `src/pdf2md/config.py` | 管理输入目录、输出目录、日志级别等配置 |
 | 异常与日志层 | `src/pdf2md/errors.py`、`src/pdf2md/logger.py` | 统一错误提示和运行日志 |
 
@@ -74,7 +76,7 @@ pdf2md/
 
 | 功能 | 文档 |
 | --- | --- |
-| 批量 PDF 转 Markdown | [docs/functions/pdf_batch_convert.md](./docs/functions/pdf_batch_convert.md) |
+| 批量 PDF 转 Markdown，Markdown 直接复制，图片导出到 sources | [docs/functions/pdf_batch_convert.md](./docs/functions/pdf_batch_convert.md) |
 
 ## 版本文档
 
@@ -82,4 +84,5 @@ pdf2md/
 | --- | --- |
 | v1.0.0 原始需求 | [docs/v1.0.0/需求.md](./docs/v1.0.0/需求.md) |
 | v1.0.0 实现方案 | [docs/v1.0.0/实现方案.md](./docs/v1.0.0/实现方案.md) |
+| v1.0.0 验收问题 | [docs/v1.0.0/验收问题.md](./docs/v1.0.0/验收问题.md) |
 | v1.0.0 问题解决 | [docs/v1.0.0/问题解决.md](./docs/v1.0.0/问题解决.md) |

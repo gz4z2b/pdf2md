@@ -10,12 +10,12 @@ from .logger import setup_logging
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="批量将 PDF 文件转换成 Markdown 文档")
+    parser = argparse.ArgumentParser(description="批量处理 PDF 和 Markdown 文档")
     parser.add_argument(
         "--input-dir",
         type=Path,
         default=DEFAULT_INPUT_DIR,
-        help="PDF 输入目录，默认 origin",
+        help="源文件目录，默认 origin",
     )
     parser.add_argument(
         "--output-dir",
@@ -23,10 +23,19 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_OUTPUT_DIR,
         help="Markdown 输出目录，默认 output",
     )
-    parser.add_argument(
+    output_mode = parser.add_mutually_exclusive_group()
+    output_mode.add_argument(
         "--overwrite",
+        dest="overwrite",
         action="store_true",
-        help="覆盖已存在的 Markdown 文件",
+        default=True,
+        help="替换已存在的 Markdown 文件，默认行为",
+    )
+    output_mode.add_argument(
+        "--skip-existing",
+        dest="overwrite",
+        action="store_false",
+        help="如果 Markdown 文件已存在，则跳过该文件",
     )
     parser.add_argument(
         "--log-level",
